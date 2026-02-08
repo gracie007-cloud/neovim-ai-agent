@@ -27,7 +27,8 @@ X = how many lines should be highlighted
 <Rule>Each location is separated by new lines</Rule>
 <Rule>Each path is specified in absolute pathing</Rule>
 <Example>
-You have found 3 locations in files foo.js, bar.js, and baz.js.  There are 2 locations in foo.js, 1 in bar.js and baz.js.
+You have found 3 locations in files foo.js, bar.js, and baz.js.
+There are 2 locations in foo.js, 1 in bar.js and baz.js.
 <Output>
 /path/to/project/src/foo.js:24:8,3
 /path/to/project/src/foo.js:71:12,7

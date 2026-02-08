@@ -35,7 +35,7 @@ describe("request_status", function()
       return #calls == 1
     end)
     eq(1, #calls)
-    eq({ "⠹ TITLE", }, calls[1])
+    eq({ "⠹ TITLE" }, calls[1])
     calls = {}
 
     status:push("bar")
