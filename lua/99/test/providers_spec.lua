@@ -5,13 +5,18 @@ local Providers = require("99.providers")
 describe("providers", function()
   describe("OpenCodeProvider", function()
     it("builds correct command with model", function()
-      local request = { context = { model = "anthropic/claude-sonnet-4-5" } }
+      local request = { model = "anthropic/claude-sonnet-4-5" }
       local cmd =
         Providers.OpenCodeProvider._build_command(nil, "test query", request)
-      eq(
-        { "opencode", "run", "-m", "anthropic/claude-sonnet-4-5", "test query" },
-        cmd
-      )
+      eq({
+        "opencode",
+        "run",
+        "--agent",
+        "build",
+        "-m",
+        "anthropic/claude-sonnet-4-5",
+        "test query",
+      }, cmd)
     end)
 
     it("has correct default model", function()
@@ -24,7 +29,7 @@ describe("providers", function()
 
   describe("ClaudeCodeProvider", function()
     it("builds correct command with model", function()
-      local request = { context = { model = "anthropic/claude-sonnet-4-5" } }
+      local request = { model = "anthropic/claude-sonnet-4-5" }
       local cmd =
         Providers.ClaudeCodeProvider._build_command(nil, "test query", request)
       eq({
@@ -44,7 +49,7 @@ describe("providers", function()
 
   describe("CursorAgentProvider", function()
     it("builds correct command with model", function()
-      local request = { context = { model = "anthropic/claude-sonnet-4-5" } }
+      local request = { model = "anthropic/claude-sonnet-4-5" }
       local cmd =
         Providers.CursorAgentProvider._build_command(nil, "test query", request)
       eq({
@@ -58,6 +63,27 @@ describe("providers", function()
 
     it("has correct default model", function()
       eq("sonnet-4.5", Providers.CursorAgentProvider._get_default_model())
+    end)
+  end)
+
+  describe("GeminiCLIProvider", function()
+    it("builds correct command with model", function()
+      local request = { model = "gemini-2.5-pro" }
+      local cmd =
+        Providers.GeminiCLIProvider._build_command(nil, "test query", request)
+      eq({
+        "gemini",
+        "--approval-mode",
+        "auto_edit",
+        "--model",
+        "gemini-2.5-pro",
+        "--prompt",
+        "test query",
+      }, cmd)
+    end)
+
+    it("has correct default model", function()
+      eq("auto", Providers.GeminiCLIProvider._get_default_model())
     end)
   end)
 
@@ -103,6 +129,17 @@ describe("providers", function()
       end
     )
 
+    it(
+      "uses GeminiCLIProvider default model when provider specified but no model",
+      function()
+        local _99 = require("99")
+
+        _99.setup({ provider = Providers.GeminiCLIProvider })
+        local state = _99.__get_state()
+        eq("auto", state.model)
+      end
+    )
+
     it("uses custom model when both provider and model specified", function()
       local _99 = require("99")
 
@@ -120,6 +157,7 @@ describe("providers", function()
       eq("function", type(Providers.OpenCodeProvider.make_request))
       eq("function", type(Providers.ClaudeCodeProvider.make_request))
       eq("function", type(Providers.CursorAgentProvider.make_request))
+      eq("function", type(Providers.GeminiCLIProvider.make_request))
     end)
   end)
 end)
